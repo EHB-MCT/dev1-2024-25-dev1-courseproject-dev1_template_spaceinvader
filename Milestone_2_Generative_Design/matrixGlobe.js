@@ -7,13 +7,15 @@ function setup() {
 
 function draw() {
     background(0);
-    drawWireframeGlobe(width / 2, height / 2, min(width, height) * 0.4); // Draw the wireframe globe
+    drawWireframeGlobe(width / 2, height / 2, min(width, height) * 0.4); 
 }
 
 // Function to draw the wireframe globe
 function drawWireframeGlobe(centerX, centerY, radius) {
-    let numLines = 15;
-    stroke('#00ff00');
+    let numLines = 25; // Number of grid lines
+    let colorPalette = ['#00ff41', '#00f7ff', '#9400d3', '#ffffff', '#808080']; // Matrix color palette
+    let randomColor = random(colorPalette);
+    stroke(randomColor);
     noFill();
 
     // Draw latitude lines
