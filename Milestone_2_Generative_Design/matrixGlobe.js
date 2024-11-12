@@ -1,4 +1,5 @@
 "use strict";
+
 function setup() {
     let canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent('sketch-holder');
@@ -9,8 +10,9 @@ function draw() {
     // background(0);
     let matrixPalette = ['#00ff41', '#39ff14', '#03fcba', '#66ff66'];
     drawStars(400, matrixPalette); 
-    drawGlowingParticles(100, matrixPalette);
-    drawMatrixGlobe(width / 2, height / 2, min(width, height) * 0.4); 
+    drawGlowingParticles(50, matrixPalette);
+    drawMatrixGlobe(width / 2, height / 2, min(width, height) * 0.4);
+    drawSpaceships(10); 
 }
 
 function drawMatrixGlobe(centerX, centerY, radius) {
@@ -69,7 +71,47 @@ function drawGlowingParticles(numParticles, colorPalette) {
     }
 }
 
+function drawSpaceships(numSpaceships) {
+    for (let i = 0; i < numSpaceships; i++) {
+        let x = random(width);
+        let y = random(height * 0.2, height * 0.8);
+        let shipWidth = random(60, 90);
+        let shipHeight = shipWidth * 0.4;
+        let colorPalette = ['#ffffff', '#a9a9a9', '#000000'];
+
+        fill(random(colorPalette));
+        stroke(200);
+        strokeWeight(2);
+        beginShape();
+        // Nose of the spaceship (sharp and aerodynamic)
+        vertex(x, y);
+        vertex(x + shipWidth * 0.2, y - shipHeight * 0.5);
+        // Front fuselage
+        vertex(x + shipWidth * 0.5, y - shipHeight * 0.4);
+        // Left wing (upper)
+        vertex(x + shipWidth * 0.7, y - shipHeight);
+        vertex(x + shipWidth * 0.9, y - shipHeight);
+        vertex(x + shipWidth * 0.75, y - shipHeight * 0.4);
+        // Rear fuselage (top)
+        vertex(x + shipWidth * 1.0, y - shipHeight * 0.3);
+        // Back thruster section
+        vertex(x + shipWidth * 1.3, y);
+        vertex(x + shipWidth * 1.0, y + shipHeight * 0.3);
+        // Right wing (lower)
+        vertex(x + shipWidth * 0.75, y + shipHeight * 0.4);
+        vertex(x + shipWidth * 0.9, y + shipHeight);
+        vertex(x + shipWidth * 0.7, y + shipHeight);
+        // Front fuselage (bottom)
+        vertex(x + shipWidth * 0.5, y + shipHeight * 0.4);
+        vertex(x + shipWidth * 0.2, y + shipHeight * 0.5);
+        endShape(CLOSE);
+    }
+}
+
+
 // Adjust canvas on window resize
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
+
+
