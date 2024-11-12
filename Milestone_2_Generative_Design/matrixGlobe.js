@@ -1,5 +1,4 @@
 "use strict";
-
 function setup() {
     let canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent('sketch-holder');
@@ -105,11 +104,30 @@ function drawSpaceships(numSpaceships) {
         vertex(x + shipWidth * 0.5, y + shipHeight * 0.4);
         vertex(x + shipWidth * 0.2, y + shipHeight * 0.5);
         endShape(CLOSE);
+
+
+                // Glowing effect for thrusters
+                fill('#00ff41');
+                noStroke();
+                ellipse(x + shipWidth * 1.15, y - shipHeight * 0.2, shipWidth * 0.1, shipHeight * 0.3);
+                ellipse(x + shipWidth * 1.15, y + shipHeight * 0.2, shipWidth * 0.1, shipHeight * 0.3);
+        
+                // Cockpit section with glass effect
+                fill(0, 255, 255, 150); // Semi-transparent cyan for the cockpit
+                ellipse(x + shipWidth * 0.4, y, shipWidth * 0.2, shipHeight * 0.5);
+        
+        
+                // Fins with a glowing effect
+                fill(random(colorPalette));
+                noStroke();
+                triangle(x + shipWidth * 0.65, y - shipHeight * 0.8, x + shipWidth * 0.8, y - shipHeight * 0.5, x + shipWidth * 0.55, y - shipHeight * 0.5);
+                triangle(x + shipWidth * 0.65, y + shipHeight * 0.8, x + shipWidth * 0.8, y + shipHeight * 0.5, x + shipWidth * 0.55, y + shipHeight * 0.5);
     }
+
 }
 
 
-// Adjust canvas on window resize
+
 function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
 }
