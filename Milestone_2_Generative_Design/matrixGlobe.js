@@ -11,7 +11,7 @@ function draw() {
     drawStars(400, matrixPalette); 
     drawGlowingParticles(50, matrixPalette);
     drawMatrixGlobe(width / 2, height / 2, min(width, height) * 0.4);
-    drawSpaceships(10); 
+    drawSpaceships(); 
 }
 
 function drawMatrixGlobe(centerX, centerY, radius) {
@@ -23,7 +23,6 @@ function drawMatrixGlobe(centerX, centerY, radius) {
         ['#00f7ff', '#1e90ff', '#4682b4', '#5f9ea0'], // Electric blue
         ['#808080', '#a9a9a9', '#696969', '#d3d3d3'], // Grey shades
         ['#FFFFFF', '#F6F6F6', '#ECECEC', '#E1E1E1']  // white
-
     ];
     let colorPalette = random(colorPalettes);
 
@@ -46,7 +45,7 @@ function drawMatrixGlobe(centerX, centerY, radius) {
     }
 }
 
-// Function to draw stars in the background with Matrix-style colors
+
 function drawStars(numStars, colorPalette) {
     for (let i = 0; i < numStars; i++) {
         let x = random(width);
@@ -58,7 +57,7 @@ function drawStars(numStars, colorPalette) {
     }
 }
 
-// Function to draw glowing particles with Matrix-style colors
+
 function drawGlowingParticles(numParticles, colorPalette) {
     for (let i = 0; i < numParticles; i++) {
         let x = random(width);
@@ -70,7 +69,10 @@ function drawGlowingParticles(numParticles, colorPalette) {
     }
 }
 
-function drawSpaceships(numSpaceships) {
+function drawSpaceships() {
+
+    let numSpaceships = (random(10));
+
     for (let i = 0; i < numSpaceships; i++) {
         let x = random(width);
         let y = random(height * 0.2, height * 0.8);
@@ -105,31 +107,20 @@ function drawSpaceships(numSpaceships) {
         vertex(x + shipWidth * 0.2, y + shipHeight * 0.5);
         endShape(CLOSE);
 
+        // Glowing effect for thrusters
+        fill('#00ff41');
+        noStroke();
+        ellipse(x + shipWidth * 1.15, y - shipHeight * 0.2, shipWidth * 0.1, shipHeight * 0.3);
+        ellipse(x + shipWidth * 1.15, y + shipHeight * 0.2, shipWidth * 0.1, shipHeight * 0.3);
 
-                // Glowing effect for thrusters
-                fill('#00ff41');
-                noStroke();
-                ellipse(x + shipWidth * 1.15, y - shipHeight * 0.2, shipWidth * 0.1, shipHeight * 0.3);
-                ellipse(x + shipWidth * 1.15, y + shipHeight * 0.2, shipWidth * 0.1, shipHeight * 0.3);
-        
-                // Cockpit section with glass effect
-                fill(0, 255, 255, 150); // Semi-transparent cyan for the cockpit
-                ellipse(x + shipWidth * 0.4, y, shipWidth * 0.2, shipHeight * 0.5);
-        
-        
-                // Fins with a glowing effect
-                fill(random(colorPalette));
-                noStroke();
-                triangle(x + shipWidth * 0.65, y - shipHeight * 0.8, x + shipWidth * 0.8, y - shipHeight * 0.5, x + shipWidth * 0.55, y - shipHeight * 0.5);
-                triangle(x + shipWidth * 0.65, y + shipHeight * 0.8, x + shipWidth * 0.8, y + shipHeight * 0.5, x + shipWidth * 0.55, y + shipHeight * 0.5);
+        // Cockpit section with glass effect
+        fill(0, 255, 255, 150); // Semi-transparent cyan for the cockpit
+        ellipse(x + shipWidth * 0.4, y, shipWidth * 0.2, shipHeight * 0.5);
+
+        // Fins with a glowing effect
+        fill(random(colorPalette));
+        noStroke();
+        triangle(x + shipWidth * 0.65, y - shipHeight * 0.8, x + shipWidth * 0.8, y - shipHeight * 0.5, x + shipWidth * 0.55, y - shipHeight * 0.5);
+        triangle(x + shipWidth * 0.65, y + shipHeight * 0.8, x + shipWidth * 0.8, y + shipHeight * 0.5, x + shipWidth * 0.55, y + shipHeight * 0.5);
     }
-
 }
-
-
-
-function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
-}
-
-
