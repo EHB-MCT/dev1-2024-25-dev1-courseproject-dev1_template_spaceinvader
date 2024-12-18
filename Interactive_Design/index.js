@@ -9,13 +9,43 @@ const width = canvas.width;
 const height = canvas.height;
 let mouse = { x: width / 2, y: height / 2 };
 let animationFrameId = null;
-let timeout = null; // For detecting mouse inactivity
-let isAnimating = false; // Check variable to track animation state
+let timeout = null;
+let isAnimating = false;
 let time = 0;
 
 // ------ RandomBetween function ------
+// function to pick a random number between two numbers.
 function randomBetween(min, max) {
   return Math.random() * (max - min) + min;
+}
+
+// ------ Star Class ------
+class Star {
+  constructor() {
+    this.x = Math.random() * width;
+    this.y = Math.random() * (height * 0.6);
+    this.baseSize = randomBetween(0.5, 2);
+    this.opacity = randomBetween(0.3, 1);
+  }
+
+  update() {
+    this.size = this.baseSize + (mouse.y / height) * 1.5 + Math.sin(time * 0.5) * 0.5;
+    this.opacity = 0.3 + Math.abs(Math.sin(time * 0.5)) * 0.7;
+  }
+
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+// ------ Stars Array ------
+let numberOfStars = 300;
+const stars = [];
+for (let i = 0; i < numberOfStars; i++) {
+  stars.push(new Star());
 }
 
 // ------ Gradient Palette ------
@@ -48,25 +78,7 @@ function drawGrid(spacing) {
   }
 }
 
-// ------ Stars ------
-function drawStar(x, y, size, opacity) {
-  ctx.beginPath();
-  ctx.arc(x, y, size, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-  ctx.fill();
-}
-
-function generateStars(count) {
-  for (let i = 0; i < count; i++) {
-    const x = Math.random() * width;
-    const y = Math.random() * (height * 0.6);
-    const size = randomBetween(0.5, 2) + (mouse.y / height) * 1.5;
-    const opacity = randomBetween(0.3, 1);
-    drawStar(x, y, size, opacity);
-  }
-}
-
-// ------ Hills/waves with Gradient Colors ------
+// ------ Gradient Hills ------
 
 // The hill starts at a specified vertical position (baseY) and uses the amplitude to control the height of the wave.
 // The shape of the hill is created using the sine function.
@@ -119,7 +131,10 @@ function drawMoon() {
 function drawLandscape() {
   drawSky();
   drawGrid(50);
-  generateStars(300);
+  stars.forEach((star) => {
+    star.update();
+    star.draw();
+  });
   drawHill(height * 0.7, 50);
   drawHill(height * 0.8, 70);
   drawHill(height * 0.9, 90);
@@ -134,7 +149,6 @@ function animateLandscape() {
   animationFrameId = requestAnimationFrame(animateLandscape);
 }
 
-// ------ Start Animation ------
 function startAnimation() {
   if (!isAnimating) {
     isAnimating = true;
@@ -142,7 +156,6 @@ function startAnimation() {
   }
 }
 
-// ------ Stop Animation ------
 function stopAnimation() {
   if (isAnimating) {
     isAnimating = false;
@@ -150,21 +163,17 @@ function stopAnimation() {
   }
 }
 
-// ------ Mouse Interaction ------
+
 window.addEventListener("mousemove", (event) => {
   mouse.x = event.clientX;
   mouse.y = event.clientY;
 
   clearTimeout(timeout);
-
   startAnimation();
-
-  // Stop animation after 100ms of no cursor movement/hovering
   timeout = setTimeout(() => {
     stopAnimation();
   }, 100);
 });
-
 
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
