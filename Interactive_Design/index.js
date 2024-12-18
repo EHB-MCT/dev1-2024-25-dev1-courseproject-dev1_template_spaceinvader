@@ -7,17 +7,21 @@ canvas.height = window.innerHeight;
 
 const width = canvas.width;
 const height = canvas.height;
-let mouse = { x: width / 2, y: height / 2 }; // Track mouse position
+let mouse = { x: width / 2, y: height / 2 };
+let animationFrameId = null;
+let timeout = null; // For detecting mouse inactivity
+let isAnimating = false; // Check variable to track animation state
+let time = 0;
 
-// ------ RandomBetween function to re-use in the code to get a random number between two numbers ------
+// ------ RandomBetween function ------
 function randomBetween(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-// ----------- Gradient Color Palette ----------
+// ------ Gradient Palette ------
 const gradientPalette = ["#87CEFA", "#4682B4", "#D3D3D3", "#A9A9A9", "#FFFFFF", "#6A5ACD", "#483D8B", "#000000", "#1B1F3B"];
 
-// -------- Sky Gradient ----------
+// ------ Sky Gradient ------
 function drawSky() {
   const gradient = ctx.createLinearGradient(0, 0, 0, height);
   gradient.addColorStop(0, "#000428");
@@ -26,7 +30,7 @@ function drawSky() {
   ctx.fillRect(0, 0, width, height);
 }
 
-// ------ White grid on sky gradient --------
+// ------ Grid ------
 function drawGrid(spacing) {
   ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
   ctx.lineWidth = 2;
@@ -44,7 +48,7 @@ function drawGrid(spacing) {
   }
 }
 
-// -------- Stars --------
+// ------ Stars ------
 function drawStar(x, y, size, opacity) {
   ctx.beginPath();
   ctx.arc(x, y, size, 0, Math.PI * 2);
@@ -56,20 +60,10 @@ function generateStars(count) {
   for (let i = 0; i < count; i++) {
     const x = Math.random() * width;
     const y = Math.random() * (height * 0.6);
-    const size = randomBetween(0.5, 2) + (mouse.y / height) * 1.5; // Adjust size based on mouse position
+    const size = randomBetween(0.5, 2) + (mouse.y / height) * 1.5;
     const opacity = randomBetween(0.3, 1);
     drawStar(x, y, size, opacity);
   }
-}
-
- // --------- Gradient --------
- function createGradient(x0, y0, x1, y1) {
-    const color1 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
-    const color2 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
-    const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
-    gradient.addColorStop(0, color1);
-    gradient.addColorStop(1, color2);
-    return gradient;
 }
 
 // ------ Hills/waves with Gradient Colors ------
@@ -78,6 +72,15 @@ function generateStars(count) {
 // The shape of the hill is created using the sine function.
 // readed sources to code this part an get the logic:
 // https://stackoverflow.com/questions/64063114/how-can-i-make-my-sine-wave-in-javascript-work-properly
+
+function createGradient(x0, y0, x1, y1) {
+  const color1 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
+  const color2 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
+  const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+  gradient.addColorStop(0, color1);
+  gradient.addColorStop(1, color2);
+  return gradient;
+}
 
 function drawHill(baseY, amplitude) {
   const gradient = createGradient(0, baseY - amplitude, width, baseY);
@@ -94,24 +97,25 @@ function drawHill(baseY, amplitude) {
   ctx.fill();
 }
 
-// ------ Moon with randomized position, scale, and gradient ------
+// ------ Moon ------
 function drawMoon() {
-    const radius = randomBetween(50, 100); // Randomized size
-    const x = randomBetween(width * 0.1, width * 0.9); // Anywhere horizontally
-    const y = randomBetween(0, height * 0.5); // Upper quadrant (top 50%)
+  const radius = randomBetween(50, 100);
+  const x = randomBetween(width * 0.1, width * 0.9);
+  const y = randomBetween(0, height * 0.5);
 
-    const moonGradient = ctx.createRadialGradient(x, y, radius * 0.3, x, y, radius);
-    const color1 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
-    const color2 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
-    moonGradient.addColorStop(0, color1);
-    moonGradient.addColorStop(1, color2);
+  const moonGradient = ctx.createRadialGradient(x, y, radius * 0.3, x, y, radius);
+  const color1 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
+  const color2 = gradientPalette[Math.floor(Math.random() * gradientPalette.length)];
+  moonGradient.addColorStop(0, color1);
+  moonGradient.addColorStop(1, color2);
 
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = moonGradient;
-    ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = moonGradient;
+  ctx.fill();
 }
 
+// ------ Complete Landscape ------
 function drawLandscape() {
   drawSky();
   drawGrid(50);
@@ -122,13 +126,45 @@ function drawLandscape() {
   drawMoon();
 }
 
+// ------ Animation Control ------
 function animateLandscape() {
+  time += 0.05; // Increment time for smooth animation
   ctx.clearRect(0, 0, width, height);
   drawLandscape();
-  requestAnimationFrame(animateLandscape);
+  animationFrameId = requestAnimationFrame(animateLandscape);
 }
 
-drawLandscape();
+// ------ Start Animation ------
+function startAnimation() {
+  if (!isAnimating) {
+    isAnimating = true;
+    animateLandscape();
+  }
+}
+
+// ------ Stop Animation ------
+function stopAnimation() {
+  if (isAnimating) {
+    isAnimating = false;
+    cancelAnimationFrame(animationFrameId);
+  }
+}
+
+// ------ Mouse Interaction ------
+window.addEventListener("mousemove", (event) => {
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+
+  clearTimeout(timeout);
+
+  startAnimation();
+
+  // Stop animation after 100ms of no cursor movement/hovering
+  timeout = setTimeout(() => {
+    stopAnimation();
+  }, 100);
+});
+
 
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
@@ -136,9 +172,4 @@ window.addEventListener("resize", () => {
   drawLandscape();
 });
 
-// ------ Mouse Interaction ------
-window.addEventListener("mousemove", (event) => {
-  mouse.x = event.clientX;
-  mouse.y = event.clientY;
-  animateLandscape();
-});
+drawLandscape();
