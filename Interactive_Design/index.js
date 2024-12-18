@@ -1,3 +1,4 @@
+// <!-- Code checked for final commit  -->
 "use strict";
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -150,8 +151,8 @@ function drawMoon() {
 
 // ------ Space Invader Signature ------
 function drawSpaceInvader() {
-  const squareSize = 8; // Smaller square size for a compact signature
-  const offsetX = width - 8 * 8 - 20; // Align to bottom-right with some padding
+  const squareSize = 10;
+  const offsetX = width - 8 * 8 - 20;
   const offsetY = height - 8 * 8 - 40;
 
   ctx.fillStyle = "#7FFF00";
@@ -190,9 +191,9 @@ function drawSpaceInvader() {
   });
 
   // Draw Name Below the Space Invader
-  ctx.fillStyle = "#FFFFFF";
+  ctx.fillStyle = "#7FFF00";
   ctx.font = "22px Arial";
-  ctx.fillText("El Ouafrasi Nordine", offsetX - 125, offsetY + 10 * squareSize);
+  ctx.fillText("El Ouafrasi Nordine", offsetX - 125, offsetY + 8 * squareSize);
 }
 
 // ------ Complete Landscape ------
@@ -207,7 +208,7 @@ function drawLandscape() {
   drawHill(height * 0.8, 70);
   drawHill(height * 0.9, 90);
   drawMoon();
-  drawSpaceInvader(); // Draw signature
+  drawSpaceInvader();
 }
 
 
